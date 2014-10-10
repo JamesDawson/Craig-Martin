@@ -7,3 +7,4 @@ class GlobalAssemblyCache : OMI_BaseResource
   [write,ValueMap{"Present", "Absent"},Values{"Present", "Absent"}] string Ensure;  
 };
 
+
