@@ -10,7 +10,24 @@ Configuration GlobalAssemlyCacheSample
             Name         = "FimExtensions.FimActivityLibrary"
             Version      = "2.0.0.0"
             AssemblyFile = "C:\tfs\Output\FimExtensions.FimActivityLibrary.dll"
-        }       
+        }
+        
+        # Exmaples of working with assemblies with the same simple name, but different metadata
+        GlobalAssemblyCache Azure_MSSHRTMI_X86
+        {
+            Ensure       = "Present"
+            Name         = "msshrtmi"
+            Architecture = "X86"
+            AssemblyFile = "C:\libs\msshrtmi\x86\msshrtmi.dll"
+        }
+               
+        GlobalAssemblyCache Azure_MSSHRTMI_X64
+        {
+            Ensure       = "Present"
+            Name         = "msshrtmi"
+            Architecture = "Amd64"
+            AssemblyFile = "C:\libs\msshrtmi\x64\msshrtmi.dll"
+        }        
     }
 }
 

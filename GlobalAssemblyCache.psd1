@@ -25,7 +25,7 @@ PowerShellVersion = '3.0'
 CLRVersion = '4.0'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @("GlobalAssemblyCache.psm1")
+NestedModules = @()
 
 # Functions to export from this module
 FunctionsToExport = @("Get-TargetResource", "Set-TargetResource", "Test-TargetResource")

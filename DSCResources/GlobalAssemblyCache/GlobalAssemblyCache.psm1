@@ -15,11 +15,25 @@ function Get-TargetResource
         [System.String]
         $Name,
 
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [System.String]
-        $Version
+        $Version,
+
+        [parameter(Mandatory = $true)]
+        [ValidateSet("", "None", "MSIL", "X86", "Amd64")]
+        [AllowEmptyString()]
+        [System.String]
+        $Architecture,
+
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [System.String]
+        $PublicKeyToken
     )
 
-    $gac = Get-GacAssembly -Name $Name -Version $Version
+    $splat = getSpecifiedAssemblyParameters $Name $Version $Architecture $PublicKeyToken
+    $gac = Get-GacAssembly @splat
 
     if ($gac -ne $null)
     {
@@ -27,6 +41,8 @@ function Get-TargetResource
             Ensure  = "Present";
             Name    = $gac.Name
             Version = $gac.Version
+            ProcessorArchitecture = $gac.ProcessorArchitecture
+            PublicKeyToken = $gac.PublicKeyToken
         }
     }
     else
@@ -35,6 +51,8 @@ function Get-TargetResource
             Ensure  = "Absent";
             Name    = $Name
             Version = $Version
+            ProcessorArchitecture = $Architecture
+            PublicKeyToken = $PublicKeyToken
         }
     }
 }
@@ -56,15 +74,29 @@ function Set-TargetResource
         [System.String]
         $Name,
 
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [System.String]
         $Version,
+
+        [parameter(Mandatory = $true)]
+        [ValidateSet("", "None", "MSIL", "X86", "Amd64")]
+        [AllowEmptyString()]
+        [System.String]
+        $Architecture,
+
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [System.String]
+        $PublicKeyToken,
 
         [ValidateNotNullOrEmpty()]
         [System.String]
         $AssemblyFile
     )
 
-    $gac = Get-GacAssembly -Name $Name -Version $Version
+    $splat = getSpecifiedAssemblyParameters $Name $Version $Architecture $PublicKeyToken
+    $gac = Get-GacAssembly @splat
 
     if ($Ensure -eq 'Present')
     {
@@ -103,15 +135,29 @@ function Test-TargetResource
         [System.String]
         $Name,
 
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [System.String]
         $Version,
+
+        [parameter(Mandatory = $true)]
+        [ValidateSet("", "None", "MSIL", "X86", "Amd64")]
+        [AllowEmptyString()]
+        [System.String]
+        $Architecture,
+
+        [parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [System.String]
+        $PublicKeyToken,
 
         [ValidateNotNullOrEmpty()]
         [System.String]
         $AssemblyFile
     )
 
-    $gac = Get-GacAssembly -Name $Name -Version $Version
+    $splat = getSpecifiedAssemblyParameters $Name $Version $Architecture $PublicKeyToken
+    $gac = Get-GacAssembly @splat
 
     if ($Ensure -eq 'Present')
     {
@@ -140,6 +186,28 @@ function Test-TargetResource
     {
         return $true
     }
+}
+
+function getSpecifiedAssemblyParameters
+{
+    [CmdletBinding()]
+    param
+    (
+        [string] $Name,
+        [string] $Version,
+        [string] $Architecture,
+        [string] $PublicKeyToken
+    )
+
+    # Name is always mandatory
+    $params = @{ Name = $Name }
+
+    # These are optional parameters, but Get-GacAssembly doesn't allow the parameters to be null if they are specified
+    if (![String]::IsNullOrEmpty($Version)) { $params += @{ Version = $Version } }
+    if (![String]::IsNullOrEmpty($Architecture)) { $params += @{ ProcessorArchitecture = $Architecture } }
+    if (![String]::IsNullOrEmpty($PublicKeyToken)) { $params += @{ PublicKeyToken = $PublicKeyToken } }
+
+    return $params
 }
 
 
